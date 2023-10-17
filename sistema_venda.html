@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Compras</title>
+    <style>
+        body {
+            background-image: url('background.jpg'); /* Troque 'background.jpg' pelo URL da sua imagem de fundo */
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #0074d9;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #0074d9;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .registro {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .registro-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .registro-item {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .registro-item strong {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Compras</h1>
+        <form id="registroForm">
+            <label for="produto">Produto:</label>
+            <input type="text" id="produto" name="produto" required>
+
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" name="quantidade" required>
+
+            <label for="valor">Valor (opcional):</label>
+            <input type="number" id="valor" name="valor">
+
+            <button type="submit">Registrar Compra</button>
+        </form>
+    </div>
+
+    <div class="registro container">
+        <h2 class="registro-title">Compras Registradas</h2>
+        <div id="comprasRegistradas"></div>
+    </div>
+
+    <script>
+        // Função para registrar uma compra
+        function registrarCompra() {
+            var produto = document.getElementById("produto").value;
+            var quantidade = document.getElementById("quantidade").value;
+            var valor = document.getElementById("valor").value;
+
+            // Verificar se os campos não estão vazios
+            if (produto.trim() !== "" && quantidade.trim() !== "") {
+                var compra = {
+                    produto: produto,
+                    quantidade: quantidade,
+                    valor: valor || "Não especificado"
+                };
+
+                // Recuperar compras existentes do localStorage ou criar um array vazio
+                var compras = JSON.parse(localStorage.getItem("compras")) || [];
+                compras.push(compra);
+
+                // Salvar as compras no localStorage
+                localStorage.setItem("compras", JSON.stringify(compras));
+
+                // Atualizar a exibição das compras registradas
+                exibirComprasRegistradas();
+
+                // Limpar os campos do formulário
+                document.getElementById("produto").value = "";
+                document.getElementById("quantidade").value = "";
+                document.getElementById("valor").value = "";
+            }
+        }
+
+        // Função para exibir as compras registradas
+        function exibirComprasRegistradas() {
+            var compras = JSON.parse(localStorage.getItem("compras")) || [];
+
+            var comprasHtml = "";
+            compras.forEach(function (compra) {
+                comprasHtml += `
+                    <div class="registro-item">
+                        <strong>Produto:</strong> ${compra.produto}
+                        <br>
+                        <strong>Quantidade:</strong> ${compra.quantidade}
+                        <br>
+                        <strong>Valor:</strong> R$ ${compra.valor}
+                    </div>
+                `;
+            });
+
+            document.getElementById("comprasRegistradas").innerHTML = comprasHtml;
+        }
+
+        // Adicionar um ouvinte de evento para o formulário de registro
+        document.getElementById("registroForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            registrarCompra();
+        });
+
+        // Exibir as compras registradas ao carregar a página
+        exibirComprasRegistradas();
+    </script>
+</body>
+</html>
